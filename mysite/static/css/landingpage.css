@@ -1,0 +1,27 @@
+
+header {
+    background-color: white;
+}
+
+/* Additional styles for dropdown */
+.dropdown-content {
+    display: none; /* Hide dropdown by default */
+    background-color: white; /* Set background color to white */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Border around dropdown */
+    border-radius: 0.375rem; /* Rounded corners */
+    z-index: 10; /* Ensure dropdown is above other content */
+}
+.dropdown.active .dropdown-content {
+    display: block; /* Show dropdown when active */
+}
+.dropdown-content a {
+    display: block; /* Make links block level for full width */
+    padding: 0.5rem 1rem; /* Padding for each item */
+    color: #4A5568; /* Text color */
+}
+.dropdown-content a:hover {
+    background-color: rgba(237, 234, 248, 1); /* Change background on hover */
+}
+.dropdown-content a:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Border between items */
+}

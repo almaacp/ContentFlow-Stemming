@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ContentFlow helps you optimize your content for better engagement and visibility." />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css" />
+    <link rel="stylesheet" href="{% static 'css/analysis-result.css' %}" />
+    <link rel="icon" href="{% static 'images/LOGO.png' %}" />
+    <title>ContentFlow</title>
+  </head>
+  <body class="font-montserrat">
+    <header class="text-gray-700 body-font border-b border-gray-200">
+      <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+        <img class="object-cover object-center rounded h-10 w-10 mr-2" alt="ContentFlow Logo" src="{% static 'images/LOGO.png' %}" />
+        <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="{% url 'home' %}">
+          <span class="ml-3 text-xl">CONTENT FLOW</span>
+        </a>
+        <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+          <a href="{% url 'analysis' %}" class="mr-5 hover:text-gray-900">Analysis</a>
+          <a href="{% url 'faq' %}" class="mr-5 hover:text-gray-900">FAQ</a>
+          <a class="mr-5 hover:text-gray-900" href="#">Sign In</a>
+        </nav>
+      </div>
+    </header>
+
+<section class="analysis-result">
+  <div id="content">
+    <h1>Analysis Result</h1>
+
+    <!-- Bagian URL dan Judul -->
+    <div class="score-box">
+      <p><strong>🌐 URL:</strong> {{ result.url }}</p>
+      <p><strong>📖 Title:</strong> {{ result.title }}</p>
+    </div>
+
+    <!-- Kata Kunci Teratas -->
+      <div class="score-box">
+        <p class="score-title" style="text-align: left;">🔑 Top Keywords</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p class="font-semibold">Without Stemming:</p>
+            <ul>{% for k in result.keywords_raw %}<li>• {{ k }}</li>{% endfor %}</ul>
+          </div>
+          <div>
+            <p class="font-semibold">With Stemming:</p>
+            <ul>{% for k in result.keywords_stemmed %}<li>• {{ k }}</li>{% endfor %}</ul>
+          </div>
+        </div>
+      </div>
+
+    <!-- Skor SEO per Kriteria (Non-Stemming vs Stemming) -->
+    <div class="score-box flex gap-6">
+      <!-- Non-Stemming -->
+      <div class="score-table">
+        <p class="score-title">📈 SEO Score<br>(Non-Stemming)</p>
+        <table class="score-details">
+          <thead>
+            <tr>
+              <th>Criteria</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for criteria, score in result.criteria_scores_raw.items %}
+            <tr>
+              <td>{{ criteria }}</td>
+              <td>{{ score }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="final-score">
+          <strong>🌟 Total SEO Score:</strong> {{ result.total_score_raw }}
+          <span>({{ result.optimization_level_raw }})</span>
+        </p>
+      </div>
+
+      <!-- Stemming -->
+      <div class="score-table">
+        <p class="score-title">📈 SEO Score<br>(Stemming)</p>
+        <table class="score-details">
+          <thead>
+            <tr>
+              <th>Criteria</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for criteria, score in result.criteria_scores_stemmed.items %}
+            <tr>
+              <td>{{ criteria }}</td>
+              <td>{{ score }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="final-score">
+          <strong>🌟 Total SEO Score:</strong> {{ result.total_score_stemmed }}
+          <span>({{ result.optimization_level_stemmed }})</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Rekomendasi (Non-Stemming vs Stemming) -->
+    <div class="score-box flex gap-6">
+      <!-- Non-Stemming -->
+      <div class="recommendation-table">
+        <p class="score-title">📌 Recommendations (Non-Stemming)</p>
+        <table class="score-details" style="font-size: 14px;">
+          <tr>
+            <th>Criteria</th>
+            <th>Recommendation</th>
+          </tr>
+          {% for criteria, recommendation in result.recommendations.items %}
+          <tr>
+            <td>{{ criteria }}</td>
+            <td>
+              {% if criteria == 'Heading Length' %}
+              {% for item in recommendation %}
+                <li>{{ item }}</li>
+              {% endfor %}
+              {% else %}
+              {{ recommendation }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <!-- Stemming -->
+      <div class="recommendation-table">
+        <p class="score-title">📌 Recommendations (Stemming)</p>
+        <table class="score-details" style="font-size: 14px;">
+          <tr>
+            <th>Criteria</th>
+            <th>Recommendation</th>
+          </tr>
+          {% for criteria, recommendation in result.recommendations_stemmed.items %}
+          <tr>
+            <td>{{ criteria }}</td>
+            <td>
+              {% if criteria == 'Heading Length' %}
+              {% for item in recommendation %}
+                <li>{{ item }}</li>
+              {% endfor %}
+              {% else %}
+              {{ recommendation }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+
+            <div class="score-box" id="in-depth-insights">
+            <p class="score-title">📈 In-Depth Scoring Insights</p>
+            <table class="score-details">
+              <thead>
+                  <tr>
+                      <th>Criteria</th>
+                      <th>Description</th>
+                      <th>Score</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Title Length -->
+                  <tr>
+                      <td rowspan="3">Title Length</td>
+                      <td>The title length is within the optimal range (50-60 characters)</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>The title length is close to optimal (45-49 or 61-65 characters)</td>
+                      <td>5</td>
+                  </tr>
+                  <tr>
+                      <td>The title length is outside the optimal range (less than 45 or more than 65 characters)</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- Heading Count -->
+                  <tr>
+                      <td rowspan="3">Heading Count</td>
+                      <td>The page contains 2-3 headings</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>The page contains 1 heading</td>
+                      <td>5</td>
+                  </tr>
+                  <tr>
+                      <td>No headings or more than 3 headings</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- Heading Length -->
+                  <tr>
+                      <td rowspan="3">Heading Length</td>
+                      <td>All headings are between 20-70 characters long</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>Most headings are between 20-70 characters long</td>
+                      <td>5</td>
+                  </tr>
+                  <tr>
+                      <td>No headings are between 20-70 characters long</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- Keyword in Title -->
+                  <tr>
+                      <td rowspan="3">Keyword in Title</td>
+                      <td>The title contains the primary keyword once</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>The title contains the primary keyword twice</td>
+                      <td>5</td>
+                  </tr>
+                  <tr>
+                      <td>The primary keyword is missing or appears more than twice in the title</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- Keyword in First Paragraph -->
+                  <tr>
+                      <td rowspan="3">Keyword in First Paragraph</td>
+                      <td>The first paragraph contains the primary keyword 1-2 times</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>The first paragraph contains the primary keyword 3 times</td>
+                      <td>5</td>
+                  </tr>
+                  <tr>
+                      <td>The primary keyword is missing or appears more than 3 times in the first paragraph</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- Alt Tag on Images -->
+                  <tr>
+                      <td rowspan="3">Alt Tag on Images</td>
+                      <td>All images have relevant alt attributes</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>Some images have relevant alt attributes</td>
+                      <td>5</td>
+                  </tr>
+                  <tr>
+                      <td>No images have alt attributes or there are no images</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- Meta Tag -->
+                  <tr>
+                      <td rowspan="3">Meta Tag</td>
+                      <td>A meta description exists and contains a keyword</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>A meta description exists but does not contain a keyword</td>
+                      <td>5</td>
+                  </tr>
+                  <tr>
+                      <td>No meta description</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- Internal Links -->
+                  <tr>
+                      <td rowspan="2">Internal Links</td>
+                      <td>Internal links are present</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>No internal links are present</td>
+                      <td>0</td>
+                  </tr>
+                  <!-- External Links -->
+                  <tr>
+                      <td rowspan="2">External Links</td>
+                      <td>External links are present</td>
+                      <td>10</td>
+                  </tr>
+                  <tr>
+                      <td>No external links are present</td>
+                      <td>0</td>
+                  </tr>
+              </tbody>
+          </table>          
+        </div>        
+  </div>
+</section>
+
+    <footer class="text-gray-600 body-font border-t border-gray-200">
+      <div class="container px-5 py-12 mx-auto flex flex-wrap md:flex-row md:flex-nowrap flex-col">
+        <div class="w-64 flex-shrink-0 mx-auto text-center md:text-left">
+          <a class="flex title-font font-medium items-center justify-center md:justify-start text-gray-900">
+            <img src="{% static 'images/LOGO.png' %}" alt="" class="w-8 h-8" />
+            <span class="ml-3 text-xl">Content Flow</span>
+          </a>
+          <p class="mt-2 text-sm text-gray-500">Your partner in content optimization.</p>
+        </div>
+
+        <div class="flex-grow md:pl-20 md:mt-0 mt-6">
+          <h2 class="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">FEATURE</h2>
+          <nav class="list-none mb-10">
+            <li><a class="text-gray-600 hover:text-gray-800">Content Analysis</a></li>
+            <li><a class="text-gray-600 hover:text-gray-800">Content Recommendations</a></li>
+          </nav>
+        </div>
+
+        <div class="w-full md:w-1/4 flex-shrink-0 md:mt-0 mt-6">
+          <h2 class="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">CONTACT</h2>
+          <p class="text-gray-500 hover:text-gray-900">Email: contentflow@mail.com</p>
+          <p class="text-gray-500 hover:text-gray-900">Phone: 123-456-7890</p>
+        </div>
+      </div>
+
+      <div class="bg-gray-200 bg-opacity-75">
+        <div class="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+          <p class="text-gray-500 text-sm text-center sm:text-left">© 2024 ContentFlow — All rights reserved</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
