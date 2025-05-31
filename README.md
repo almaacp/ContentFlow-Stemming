@@ -62,7 +62,7 @@ The application utilizes Python-based *machine learning* algorithms to:
 3. Install Django and other required libraries by running these commands in the terminal:  
    ```bash
    python -m pip install Django
-   pip install django requests beautifulsoup4 nltk
+   pip install django requests beautifulsoup4 nltk Sastrawi
    ```
 4. Download the *stopwords* dataset for NLTK:  
    ```bash
