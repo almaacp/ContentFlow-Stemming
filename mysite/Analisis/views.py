@@ -26,6 +26,9 @@ stop_words = set(stopwords.words('indonesian') + stopwords.words('english'))
 def calculate_score(title, headings, first_paragraph, content, images, alt_count, meta_content, keyword_list, internal_links, external_links):
     score = {}
 
+    title_stemmed_words = re.findall(r'\b\w+\b', stem_text(title.lower()))
+    first_paragraph_stemmed_words = re.findall(r'\b\w+\b', stem_text(first_paragraph.lower())) if first_paragraph else []
+
     title_length = len(title)
     heading_count = len(headings)
     word_count = len(content.split())
@@ -54,7 +57,7 @@ def calculate_score(title, headings, first_paragraph, content, images, alt_count
     else:
         score['Heading Length'] = 0
 
-    keyword_in_title_count = sum(title.lower().count(k.lower()) for k in keyword_list)
+    keyword_in_title_count = sum(1 for k in keyword_list if k.lower() in title_stemmed_words)
     if keyword_in_title_count == 1:
         score['Keyword in Title'] = 10
     elif keyword_in_title_count == 2:
@@ -62,7 +65,7 @@ def calculate_score(title, headings, first_paragraph, content, images, alt_count
     else:
         score['Keyword in Title'] = 0
 
-    keyword_in_first_paragraph_count = sum(first_paragraph.lower().count(k.lower()) for k in keyword_list) if first_paragraph else 0
+    keyword_in_first_paragraph_count = sum(1 for k in keyword_list if k.lower() in first_paragraph_stemmed_words)
     if keyword_in_first_paragraph_count in [1, 2]:
         score['Keyword in First Paragraph'] = 10
     elif keyword_in_first_paragraph_count == 3:
