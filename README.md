@@ -2,23 +2,6 @@
 
 ---
 
-## **About Us**
-
-**Product Owners**
-- Badrus Zaman, S.Kom., M.Cs. (PIC)
-- Dr. Indra Kharisma Raharjana, S.Kom., M.T.
-
-**Group 1 - Software Development Practicum I1**
-| **No** | **Name**                     | **Student ID** |
-|--------|-------------------------------|----------------|
-| 1      | Alma Alya Cipta Putri         | 187221023      |
-| 2      | Anak Agung Ayu Bunga Kausalya | 187221027      |
-| 3      | Fina Niswatin Nikmah          | 187221033      |
-| 4      | Evitadewi Nur Hakimah         | 187221070      |
-| 5      | Naufal Zaki Riyadi            | 187221074      |
-
----
-
 ## **Application Description**
 **Content Flow** is a web-based platform designed to help users enhance the quality of their digital content.  
 The application utilizes Python-based *machine learning* algorithms to:  
