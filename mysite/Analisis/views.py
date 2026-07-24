@@ -6,7 +6,8 @@ from nltk.corpus import stopwords
 from collections import Counter
 import re
 from urllib.parse import urlparse
-from Analisis.utils import stem_text  
+from Analisis.utils import stem_text
+import time
 
 # Landing Page
 def LandingPage(request):
@@ -202,7 +203,6 @@ def determine_level(score):
     else:
         return "Tidak Optimal", "optimal-red"
 
-
 def AnalysisResult(request):
     if request.method == 'POST':
         url = request.POST.get('url')
@@ -225,14 +225,12 @@ def AnalysisResult(request):
             all_paragraphs = soup.find_all('p')
             first_paragraph = all_paragraphs[0].get_text(strip=True) if all_paragraphs else ''
 
+            # Start raw analysis timer
+            start_time_raw = time.time()
+
             words_raw = re.findall(r'\b\w+\b', content.lower())
             filtered_words_raw = [w for w in words_raw if w not in stop_words]
             keywords_raw = Counter(filtered_words_raw).most_common(3)
-
-            stemmed_content = stem_text(content.lower())
-            words_stemmed = re.findall(r'\b\w+\b', stemmed_content)
-            filtered_words_stemmed = [w for w in words_stemmed if w not in stop_words]
-            keywords_stemmed = Counter(filtered_words_stemmed).most_common(3)
 
             page_domain = urlparse(url).netloc
             internal_links, external_links = [], []
@@ -249,11 +247,25 @@ def AnalysisResult(request):
                 [k for k, _ in keywords_raw], internal_links, external_links
             )
 
+            end_time_raw = time.time()
+            duration_raw = end_time_raw - start_time_raw
+
+            # Start stemming analysis timer
+            start_time_stem = time.time()
+
+            stemmed_content = stem_text(content.lower())
+            words_stemmed = re.findall(r'\b\w+\b', stemmed_content)
+            filtered_words_stemmed = [w for w in words_stemmed if w not in stop_words]
+            keywords_stemmed = Counter(filtered_words_stemmed).most_common(3)
+
             total_score_stemmed, score_stemmed = calculate_score(
                 title, headings, first_paragraph, stemmed_content,
                 images, alt_count, meta_content,
                 [k for k, _ in keywords_stemmed], internal_links, external_links
             )
+
+            end_time_stem = time.time()
+            duration_stem = end_time_stem - start_time_stem
 
             level_raw, color_raw = determine_level(total_score_raw)
             level_stemmed, color_stemmed = determine_level(total_score_stemmed)
@@ -286,6 +298,8 @@ def AnalysisResult(request):
                 'optimization_color_stemmed': color_stemmed,
                 'recommendations': recommendations,
                 'recommendations_stemmed': recommendations_stemmed,
+                'duration_raw': duration_raw,
+                'duration_stemmed': duration_stem,
             }
 
             return render(request, 'analysis-result.html', {'result': result_data})
@@ -294,6 +308,7 @@ def AnalysisResult(request):
             return render(request, 'analysis-url.html', {'error': f'Gagal mengambil data: {e}'})
 
     return render(request, 'analysis-url.html')
+
 
 def FAQ(request):
     return render(request, 'faq.html')

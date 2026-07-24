@@ -37,6 +37,12 @@
           <p><strong>📖 Title:</strong> {{ result.title }}</p>
         </div>
 
+        <!-- Durasi Proses Analisis -->
+        <div class="score-box">
+          <p><strong>⏱️ Lama Proses (Tanpa Stemming):</strong> {{ result.duration_raw|floatformat:2 }} detik</p>
+          <p><strong>⏱️ Lama Proses (Dengan Stemming):</strong> {{ result.duration_stemmed|floatformat:2 }} detik</p>
+        </div>
+
         <!-- Kata Kunci Teratas -->
         <div class="score-box">
           <p class="score-title" style="text-align: left;">🔑 Top Keywords</p>
